@@ -35,3 +35,16 @@
 6. 等 GitHub 產生網址後，就可以用手機瀏覽器打開
 
 手機新增或修改的食譜會存在該手機瀏覽器的 localStorage。換手機、清除瀏覽器資料或換瀏覽器時，資料不會自動同步。
+
+## Icon 設計
+
+這個專案使用副品牌工具 icon：量杯加比例斜線。它不放店名、不模仿 POS 用的主 Logo，適合手機主畫面與瀏覽器分頁辨識。
+
+相關檔案：
+
+- `icon.svg`
+- `icons/favicon.ico`
+- `icons/icon-192.png`
+- `icons/icon-512.png`
+- `icons/apple-touch-icon.png`
+- `manifest.json`
