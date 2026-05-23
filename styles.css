@@ -26,6 +26,10 @@ body {
   color: var(--ink);
 }
 
+body.dialog-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select,
@@ -114,6 +118,10 @@ h2 {
   display: grid;
   gap: 8px;
   margin-top: 14px;
+}
+
+.mobile-recipe-picker {
+  display: none;
 }
 
 .recipe-item {
@@ -301,6 +309,10 @@ tbody tr:last-child td {
   color: #fff;
 }
 
+.add-recipe-button {
+  white-space: nowrap;
+}
+
 .hidden {
   display: none;
 }
@@ -358,14 +370,21 @@ dialog::backdrop {
     box-shadow: none;
   }
 
+  .panel-heading {
+    align-items: center;
+  }
+
+  .add-recipe-button {
+    min-height: 44px;
+  }
+
+  .mobile-recipe-picker {
+    display: grid;
+    margin-top: 12px;
+  }
+
   .recipe-list {
-    display: flex;
-    gap: 8px;
-    margin: 12px -4px 0;
-    overflow-x: auto;
-    padding: 0 4px 4px;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
+    display: none;
   }
 
   .recipe-item {
@@ -506,7 +525,29 @@ dialog::backdrop {
   }
 
   .dialog-card {
+    max-height: calc(100dvh - 20px);
+    overflow: auto;
     padding: 14px;
+  }
+
+  dialog[open] {
+    max-height: calc(100dvh - 20px);
+    overflow: auto;
+  }
+
+  body.dialog-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9;
+    background: rgba(26, 28, 31, 0.45);
+  }
+
+  body.dialog-open dialog[open] {
+    position: fixed;
+    inset: 10px auto auto 50%;
+    z-index: 10;
+    transform: translateX(-50%);
   }
 
   .dialog-actions {

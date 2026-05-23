@@ -79,6 +79,7 @@ let mode = "single";
 let editingIndex = null;
 
 const recipeList = document.querySelector("#recipeList");
+const recipePicker = document.querySelector("#recipePicker");
 const recipeTitle = document.querySelector("#recipeTitle");
 const ingredientSelect = document.querySelector("#ingredientSelect");
 const targetAmount = document.querySelector("#targetAmount");
@@ -101,9 +102,22 @@ document.querySelector("#editRecipe").addEventListener("click", () => openRecipe
 document.querySelector("#saveRecipe").addEventListener("click", saveRecipeFromDialog);
 document.querySelector("#resetData").addEventListener("click", resetBuiltInRecipes);
 deleteRecipe.addEventListener("click", removeRecipeFromDialog);
+recipeDialog.addEventListener("close", () => document.body.classList.remove("dialog-open"));
+recipeDialog.querySelectorAll('[value="cancel"]').forEach((button) => {
+  button.addEventListener("click", (event) => {
+    if (typeof recipeDialog.close !== "function") {
+      event.preventDefault();
+      closeDialog(recipeDialog);
+    }
+  });
+});
 ingredientSelect.addEventListener("change", renderResults);
 targetAmount.addEventListener("input", renderResults);
 precisionSelect.addEventListener("change", renderResults);
+recipePicker.addEventListener("change", () => {
+  selectedIndex = Number(recipePicker.value);
+  render();
+});
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
@@ -117,14 +131,18 @@ document.querySelectorAll(".tab").forEach((tab) => {
 
 function loadRecipes() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return structuredClone(defaultRecipes);
+  if (!saved) return cloneRecipes(defaultRecipes);
 
   try {
     const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) && parsed.length ? parsed : structuredClone(defaultRecipes);
+    return Array.isArray(parsed) && parsed.length ? parsed : cloneRecipes(defaultRecipes);
   } catch {
-    return structuredClone(defaultRecipes);
+    return cloneRecipes(defaultRecipes);
   }
+}
+
+function cloneRecipes(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function saveRecipes() {
@@ -145,7 +163,14 @@ function formatNumber(value) {
 
 function renderRecipeList() {
   recipeList.innerHTML = "";
+  recipePicker.innerHTML = "";
   recipes.forEach((recipe, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = recipe.name;
+    option.selected = index === selectedIndex;
+    recipePicker.append(option);
+
     const button = document.createElement("button");
     button.type = "button";
     button.className = `recipe-item${index === selectedIndex ? " active" : ""}`;
@@ -200,7 +225,7 @@ function getPantryRatio() {
   const ratios = [];
 
   recipe.ingredients.forEach((ingredient) => {
-    const input = pantryInputs.querySelector(`[data-ingredient="${CSS.escape(ingredient.name)}"]`);
+    const input = findPantryInput(ingredient.name);
     const amount = Number(input?.value);
     if (Number.isFinite(amount) && amount > 0 && ingredient.amount > 0) {
       ratios.push({
@@ -219,6 +244,12 @@ function getPantryRatio() {
   };
 }
 
+function findPantryInput(ingredientName) {
+  return Array.from(pantryInputs.querySelectorAll("input")).find(
+    (input) => input.dataset.ingredient === ingredientName
+  );
+}
+
 function renderResults() {
   const recipe = currentRecipe();
   const singleRatio = getSingleRatio();
@@ -232,7 +263,7 @@ function renderResults() {
   recipe.ingredients.forEach((ingredient) => {
     const need = ingredient.amount * ratio;
     const row = document.createElement("tr");
-    const pantryInput = pantryInputs.querySelector(`[data-ingredient="${CSS.escape(ingredient.name)}"]`);
+    const pantryInput = findPantryInput(ingredient.name);
     const available = Number(pantryInput?.value);
     let extraText = formatNumber(need - ingredient.amount);
     let statusClass = "";
@@ -284,7 +315,25 @@ function openRecipeDialog(index = null) {
     .map((ingredient) => `${ingredient.name} ${ingredient.amount}`)
     .join("\n");
   deleteRecipe.hidden = index === null;
-  recipeDialog.showModal();
+  openDialog(recipeDialog);
+}
+
+function openDialog(dialog) {
+  if (typeof dialog.showModal === "function") {
+    dialog.showModal();
+  } else {
+    dialog.setAttribute("open", "");
+    document.body.classList.add("dialog-open");
+  }
+}
+
+function closeDialog(dialog) {
+  if (typeof dialog.close === "function") {
+    dialog.close();
+  } else {
+    dialog.removeAttribute("open");
+    document.body.classList.remove("dialog-open");
+  }
 }
 
 function parseRecipeText(text) {
@@ -334,7 +383,7 @@ function saveRecipeFromDialog() {
   }
 
   saveRecipes();
-  recipeDialog.close();
+  closeDialog(recipeDialog);
   render();
 }
 
@@ -346,7 +395,7 @@ function removeRecipeFromDialog() {
   recipes.splice(editingIndex, 1);
   selectedIndex = Math.max(0, selectedIndex - 1);
   saveRecipes();
-  recipeDialog.close();
+  closeDialog(recipeDialog);
   render();
 }
 
@@ -354,7 +403,7 @@ function resetBuiltInRecipes() {
   const confirmed = confirm("這會清除自訂修改並恢復目前內建食譜，確定嗎？");
   if (!confirmed) return;
 
-  recipes = structuredClone(defaultRecipes);
+  recipes = cloneRecipes(defaultRecipes);
   selectedIndex = 0;
   saveRecipes();
   render();
