@@ -225,6 +225,7 @@ function renderResults() {
   const pantryResult = getPantryRatio();
   const ratio = mode === "single" ? singleRatio : pantryResult.ratio;
 
+  document.body.dataset.mode = mode;
   extraHeader.textContent = mode === "single" ? "差異" : "剩餘 / 不足";
   resultBody.innerHTML = "";
 
