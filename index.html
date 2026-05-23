@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#226d68">
+    <title>食材比例換算器</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Recipe Ratio Tool</p>
+          <h1>食材比例換算器</h1>
+        </div>
+        <button id="resetData" class="ghost-button" type="button">重置內建食譜</button>
+      </header>
+
+      <section class="workspace" aria-label="食譜換算工作區">
+        <aside class="recipe-panel">
+          <div class="panel-heading">
+            <h2>食譜</h2>
+            <button id="addRecipe" class="icon-button" type="button" title="新增食譜">+</button>
+          </div>
+          <div id="recipeList" class="recipe-list"></div>
+        </aside>
+
+        <section class="calculator-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Selected Recipe</p>
+              <h2 id="recipeTitle">油蔥粿</h2>
+            </div>
+            <button id="editRecipe" class="secondary-button" type="button">編輯食譜</button>
+          </div>
+
+          <div class="mode-tabs" role="tablist" aria-label="換算模式">
+            <button class="tab active" data-mode="single" type="button">單一食材</button>
+            <button class="tab" data-mode="pantry" type="button">手邊食材</button>
+          </div>
+
+          <section id="singleMode" class="mode-panel">
+            <div class="controls-grid">
+              <label>
+                <span>用哪個食材換算</span>
+                <select id="ingredientSelect"></select>
+              </label>
+              <label>
+                <span>你目前有的容量 / 重量</span>
+                <input id="targetAmount" type="number" min="0" step="0.01" inputmode="decimal" value="100">
+              </label>
+              <label>
+                <span>小數位數</span>
+                <select id="precisionSelect">
+                  <option value="0">0 位</option>
+                  <option value="1">1 位</option>
+                  <option value="2" selected>2 位</option>
+                  <option value="3">3 位</option>
+                </select>
+              </label>
+            </div>
+            <div id="singleSummary" class="summary"></div>
+          </section>
+
+          <section id="pantryMode" class="mode-panel hidden">
+            <p class="hint">填入你手邊有的食材數量，空白代表不限制。程式會用最少的比例當作可製作上限。</p>
+            <div id="pantryInputs" class="pantry-grid"></div>
+            <div id="pantrySummary" class="summary"></div>
+          </section>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>原料</th>
+                  <th>原始配方</th>
+                  <th>換算後需求</th>
+                  <th id="extraHeader">差異</th>
+                </tr>
+              </thead>
+              <tbody id="resultBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="recipeDialog">
+      <form method="dialog" class="dialog-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recipe Editor</p>
+            <h2 id="dialogTitle">編輯食譜</h2>
+          </div>
+          <button class="icon-button" value="cancel" type="submit" title="關閉">x</button>
+        </div>
+
+        <label>
+          <span>品名</span>
+          <input id="recipeNameInput" type="text" required>
+        </label>
+
+        <label>
+          <span>原料與數量</span>
+          <textarea id="recipeTextInput" rows="10" spellcheck="false"></textarea>
+        </label>
+        <p class="hint">每行一個原料，格式例如：在來米粉 100</p>
+
+        <div class="dialog-actions">
+          <button id="deleteRecipe" class="danger-button" type="button">刪除</button>
+          <div class="action-group">
+            <button class="secondary-button" value="cancel" type="submit">取消</button>
+            <button id="saveRecipe" class="primary-button" value="default" type="button">儲存</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
