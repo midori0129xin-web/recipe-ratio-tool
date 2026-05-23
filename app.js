@@ -103,11 +103,13 @@ document.querySelector("#saveRecipe").addEventListener("click", saveRecipeFromDi
 document.querySelector("#resetData").addEventListener("click", resetBuiltInRecipes);
 deleteRecipe.addEventListener("click", removeRecipeFromDialog);
 recipeDialog.addEventListener("close", () => document.body.classList.remove("dialog-open"));
-recipeDialog.querySelectorAll('[value="cancel"]').forEach((button) => {
+recipeDialog.querySelectorAll(".dialog-close").forEach((button) => {
   button.addEventListener("click", (event) => {
+    event.preventDefault();
     if (typeof recipeDialog.close !== "function") {
-      event.preventDefault();
       closeDialog(recipeDialog);
+    } else {
+      recipeDialog.close();
     }
   });
 });

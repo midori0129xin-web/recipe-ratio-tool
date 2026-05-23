@@ -27,10 +27,7 @@
             <h2>食譜</h2>
             <button id="addRecipe" class="secondary-button add-recipe-button" type="button">新增食譜</button>
           </div>
-          <label class="mobile-recipe-picker">
-            <span>選擇食譜</span>
-            <select id="recipePicker"></select>
-          </label>
+          <select id="recipePicker" class="sr-only" aria-label="選擇食譜"></select>
           <div id="recipeList" class="recipe-list"></div>
         </aside>
 
@@ -101,7 +98,7 @@
             <p class="eyebrow">Recipe Editor</p>
             <h2 id="dialogTitle">編輯食譜</h2>
           </div>
-          <button class="icon-button" value="cancel" type="submit" title="關閉">x</button>
+          <button class="icon-button dialog-close" type="button" title="關閉">x</button>
         </div>
 
         <label>
@@ -118,7 +115,7 @@
         <div class="dialog-actions">
           <button id="deleteRecipe" class="danger-button" type="button">刪除</button>
           <div class="action-group">
-            <button class="secondary-button" value="cancel" type="submit">取消</button>
+            <button class="secondary-button dialog-close" type="button">取消</button>
             <button id="saveRecipe" class="primary-button" value="default" type="button">儲存</button>
           </div>
         </div>

@@ -317,6 +317,17 @@ tbody tr:last-child td {
   display: none;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 dialog {
   width: min(680px, calc(100% - 28px));
   padding: 0;
@@ -378,22 +389,19 @@ dialog::backdrop {
     min-height: 44px;
   }
 
-  .mobile-recipe-picker {
+  .recipe-list {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
     margin-top: 12px;
   }
 
-  .recipe-list {
-    display: none;
-  }
-
   .recipe-item {
-    flex: 0 0 auto;
-    min-width: 112px;
-    padding: 10px 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 8px;
     text-align: center;
-    scroll-snap-align: start;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .calculator-panel {
@@ -582,5 +590,9 @@ dialog::backdrop {
 
   .calculator-panel {
     padding: 12px;
+  }
+
+  .recipe-list {
+    grid-template-columns: 1fr;
   }
 }
