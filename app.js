@@ -1,4 +1,4 @@
-const STORAGE_KEY = "recipe-ratio-tool-v1";
+const STORAGE_KEY = "recipe-ratio-tool-v2";
 
 const defaultRecipes = [
   {
