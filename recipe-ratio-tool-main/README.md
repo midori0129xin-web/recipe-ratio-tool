@@ -1,0 +1,50 @@
+# 食材比例換算器
+
+這是一個不用安裝套件的靜態網頁工具，可依照食譜中任一食材的現有容量或重量，自動換算其他食材需求。
+
+## 使用方式
+
+1. 開啟 `index.html`
+2. 選擇食譜
+3. 選擇換算模式
+   - `單一食材`：輸入某項食材的新數量，換算整份配方
+   - `手邊食材`：輸入多項手邊食材，計算最多可做幾倍配方
+4. 如需新增或修改食譜，按 `新增食譜` 或 `編輯食譜`
+
+## 食譜輸入格式
+
+每行一個原料，最後放數量：
+
+```text
+在來米粉 100
+水 350
+鹽 3
+```
+
+資料會儲存在瀏覽器的 localStorage，同一台電腦同一個瀏覽器再次開啟仍會保留。
+
+## 放到 GitHub Pages
+
+這個專案是純 HTML、CSS、JavaScript，不需要安裝 Node.js 或其他套件。
+
+1. 在 GitHub 建立一個 repository
+2. 上傳這個資料夾裡的所有檔案
+3. 到 repository 的 `Settings` → `Pages`
+4. Source 選 `Deploy from a branch`
+5. Branch 選 `main`，資料夾選 `/root`
+6. 等 GitHub 產生網址後，就可以用手機瀏覽器打開
+
+手機新增或修改的食譜會存在該手機瀏覽器的 localStorage。換手機、清除瀏覽器資料或換瀏覽器時，資料不會自動同步。
+
+## Icon 設計
+
+這個專案使用副品牌工具 icon：量杯加比例斜線。它不放店名、不模仿 POS 用的主 Logo，適合手機主畫面與瀏覽器分頁辨識。
+
+相關檔案：
+
+- `icon.svg`
+- `icons/favicon.ico`
+- `icons/icon-192.png`
+- `icons/icon-512.png`
+- `icons/apple-touch-icon.png`
+- `manifest.json`

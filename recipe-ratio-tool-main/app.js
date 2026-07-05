@@ -63,12 +63,12 @@ const defaultRecipes = [
     name: "小糰子",
     ingredients: [
       { name: "無鹽奶油", amount: 100 },
-      { name: "砂糖", amount: 100 },
+      { name: "砂糖", amount: 90 },
       { name: "雞蛋", amount: 1 },
-      { name: "中筋麵粉", amount: 180 },
-      { name: "抹茶粉", amount: 20 },
+      { name: "中筋麵粉", amount: 60 },
+      { name: "低筋麵粉", amount: 130 },
+      { name: "調色粉", amount: 10 },
       { name: "泡打粉", amount: 2 },
-      { name: "巧克力粒", amount: 50 },
     ],
   },
 ];
@@ -259,7 +259,7 @@ function renderResults() {
   const ratio = mode === "single" ? singleRatio : pantryResult.ratio;
 
   document.body.dataset.mode = mode;
-  extraHeader.textContent = mode === "single" ? "調整" : "剩餘";
+  extraHeader.textContent = mode === "single" ? "差異" : "剩餘 / 不足";
   resultBody.innerHTML = "";
 
   recipe.ingredients.forEach((ingredient) => {
@@ -267,8 +267,7 @@ function renderResults() {
     const row = document.createElement("tr");
     const pantryInput = findPantryInput(ingredient.name);
     const available = Number(pantryInput?.value);
-    const difference = need - ingredient.amount;
-    let extraText = difference === 0 ? "不變" : `${difference > 0 ? "+" : "-"}${formatNumber(Math.abs(difference))}`;
+    let extraText = formatNumber(need - ingredient.amount);
     let statusClass = "";
 
     if (mode === "pantry") {
@@ -277,12 +276,13 @@ function renderResults() {
         extraText = `${left >= -0.0001 ? "剩 " : "缺 "}${formatNumber(Math.abs(left))}`;
         statusClass = left >= -0.0001 ? "status-ok" : "status-warn";
       } else {
-        extraText = "";
+        extraText = "未填";
       }
     }
 
     row.innerHTML = `
       <td>${ingredient.name}</td>
+      <td>${formatNumber(ingredient.amount)}</td>
       <td>${formatNumber(need)}</td>
       <td class="${statusClass}">${extraText}</td>
     `;
@@ -295,16 +295,16 @@ function renderResults() {
 function renderSummary(ratio, pantryResult) {
   if (mode === "single") {
     const ingredientName = ingredientSelect.value;
-    singleSummary.textContent = `以「${ingredientName}」換算，比例 ${formatNumber(ratio)} 倍。`;
+    singleSummary.textContent = `以「${ingredientName}」換算，目前比例為原始配方的 ${formatNumber(ratio)} 倍。`;
     return;
   }
 
   if (!pantryResult.limiter) {
-    pantrySummary.textContent = "填入手邊食材後自動計算。";
+    pantrySummary.textContent = "尚未填入手邊食材，先以 1 倍原始配方顯示。";
     return;
   }
 
-  pantrySummary.textContent = `可做 ${formatNumber(pantryResult.ratio)} 倍，限制：${pantryResult.limiter}`;
+  pantrySummary.textContent = `目前最多可做原始配方的 ${formatNumber(pantryResult.ratio)} 倍，限制食材是「${pantryResult.limiter}」。`;
 }
 
 function openRecipeDialog(index = null) {
