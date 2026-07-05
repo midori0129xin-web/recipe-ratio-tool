@@ -1,17 +1,12 @@
-const STORAGE_KEY = "recipe-ratio-tool-v2";
+const STORAGE_KEY = "recipe-ratio-tool-v3";
 
 const defaultRecipes = [
   {
-    name: "油蔥粿",
+    name: "黑糖甜粿",
     ingredients: [
-      { name: "在來米粉", amount: 100 },
-      { name: "水", amount: 350 },
-      { name: "鹽", amount: 3 },
-      { name: "白胡椒粉", amount: 3 },
-      { name: "紅蔥頭", amount: 50 },
-      { name: "蒜", amount: 1 },
-      { name: "醬油", amount: 8 },
-      { name: "砂糖", amount: 3 },
+      { name: "糯米粉", amount: 600 },
+      { name: "黑糖", amount: 350 },
+      { name: "水", amount: 450 },
     ],
   },
   {
@@ -21,6 +16,18 @@ const defaultRecipes = [
       { name: "黑糖", amount: 350 },
       { name: "水", amount: 450 },
       { name: "蜜紅豆", amount: 1200 },
+    ],
+  },
+  {
+    name: "小糰子",
+    ingredients: [
+      { name: "無鹽奶油", amount: 100 },
+      { name: "砂糖", amount: 90 },
+      { name: "雞蛋", amount: 1 },
+      { name: "中筋麵粉", amount: 60 },
+      { name: "低筋麵粉", amount: 130 },
+      { name: "調色粉", amount: 10 },
+      { name: "泡打粉", amount: 2 },
     ],
   },
   {
@@ -41,11 +48,16 @@ const defaultRecipes = [
     ],
   },
   {
-    name: "黑糖甜粿",
+    name: "油蔥粿",
     ingredients: [
-      { name: "糯米粉", amount: 600 },
-      { name: "黑糖", amount: 350 },
-      { name: "水", amount: 450 },
+      { name: "在來米粉", amount: 100 },
+      { name: "水", amount: 350 },
+      { name: "鹽", amount: 3 },
+      { name: "白胡椒粉", amount: 3 },
+      { name: "紅蔥頭", amount: 50 },
+      { name: "蒜", amount: 1 },
+      { name: "醬油", amount: 8 },
+      { name: "砂糖", amount: 3 },
     ],
   },
   {
@@ -55,20 +67,9 @@ const defaultRecipes = [
       { name: "泡打粉", amount: 8 },
       { name: "奶粉", amount: 64 },
       { name: "蛋", amount: 1 },
+      { name: "糖", amount: 30 },
       { name: "橄欖油", amount: 30 },
       { name: "水", amount: 240 },
-    ],
-  },
-  {
-    name: "小糰子",
-    ingredients: [
-      { name: "無鹽奶油", amount: 100 },
-      { name: "砂糖", amount: 90 },
-      { name: "雞蛋", amount: 1 },
-      { name: "中筋麵粉", amount: 60 },
-      { name: "低筋麵粉", amount: 130 },
-      { name: "調色粉", amount: 10 },
-      { name: "泡打粉", amount: 2 },
     ],
   },
 ];
