@@ -63,12 +63,12 @@ const defaultRecipes = [
     name: "小糰子",
     ingredients: [
       { name: "無鹽奶油", amount: 100 },
-      { name: "砂糖", amount: 100 },
+      { name: "砂糖", amount: 90 },
       { name: "雞蛋", amount: 1 },
-      { name: "中筋麵粉", amount: 180 },
-      { name: "抹茶粉", amount: 20 },
+      { name: "中筋麵粉", amount: 60 },
+      { name: "低筋麵粉", amount: 130 },
+      { name: "調色粉", amount: 10 },
       { name: "泡打粉", amount: 2 },
-      { name: "巧克力粒", amount: 50 },
     ],
   },
 ];
