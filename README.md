@@ -28,13 +28,15 @@
 這個專案是純 HTML、CSS、JavaScript，不需要安裝 Node.js 或其他套件。
 
 1. 在 GitHub 建立一個 repository
-2. 上傳這個資料夾裡的所有檔案
+2. 上傳這個資料夾裡的所有檔案，包含 `.github`、`icons`、`index.html`、`app.js`、`styles.css`
 3. 到 repository 的 `Settings` → `Pages`
-4. Source 選 `Deploy from a branch`
-5. Branch 選 `main`，資料夾選 `/root`
-6. 等 GitHub 產生網址後，就可以用手機瀏覽器打開
+4. Source 選 `GitHub Actions`
+5. 回到 `Actions` 分頁，等待 `Deploy GitHub Pages` 跑完
+6. 成功後就可以用手機瀏覽器打開 GitHub Pages 網址
 
 手機新增或修改的食譜會存在該手機瀏覽器的 localStorage。換手機、清除瀏覽器資料或換瀏覽器時，資料不會自動同步。
+
+如果部署失敗，先確認 GitHub repository 裡有 `index.html` 在最外層，不要只上傳 `app.js`。
 
 ## Icon 設計
 
