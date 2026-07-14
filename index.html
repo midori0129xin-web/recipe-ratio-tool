@@ -9,7 +9,7 @@
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=20260706-3">
+    <link rel="stylesheet" href="styles.css?v=20260706-4">
   </head>
   <body>
     <main class="app">
@@ -35,14 +35,15 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">Selected Recipe</p>
-              <h2 id="recipeTitle">油蔥粿</h2>
+              <h2 id="recipeTitle">黑糖甜粿</h2>
             </div>
             <button id="editRecipe" class="secondary-button" type="button">編輯食譜</button>
           </div>
 
-          <div class="mode-tabs" role="tablist" aria-label="換算模式">
+          <div class="mode-tabs" role="tablist" aria-label="功能分頁">
             <button class="tab active" data-mode="single" type="button">單一食材</button>
             <button class="tab" data-mode="pantry" type="button">手邊食材</button>
+            <button class="tab" data-mode="cost" type="button">成本計算</button>
           </div>
 
           <section id="singleMode" class="mode-panel">
@@ -72,6 +73,12 @@
             <p class="hint">填入你手邊有的食材數量，空白代表不限制。程式會用最少的比例當作可製作上限。</p>
             <div id="pantryInputs" class="pantry-grid"></div>
             <div id="pantrySummary" class="summary"></div>
+          </section>
+
+          <section id="costMode" class="mode-panel hidden">
+            <p class="hint">輸入原物料買進總價與總重量，程式會用目前換算後需求量計算成本。</p>
+            <div id="costInputs" class="cost-grid"></div>
+            <div id="costSummary" class="summary"></div>
           </section>
 
           <div class="table-wrap">
@@ -109,7 +116,7 @@
           <span>原料與數量</span>
           <textarea id="recipeTextInput" rows="10" spellcheck="false"></textarea>
         </label>
-        <p class="hint">每行一個原料，格式例如：在來米粉 100</p>
+        <p class="hint">每行一個原料，格式例如：糯米粉 600</p>
 
         <div class="dialog-actions">
           <button id="deleteRecipe" class="danger-button" type="button">刪除</button>
@@ -121,6 +128,6 @@
       </form>
     </dialog>
 
-    <script src="app.js?v=20260706-3"></script>
+    <script src="app.js?v=20260706-4"></script>
   </body>
 </html>

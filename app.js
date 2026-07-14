@@ -1,4 +1,5 @@
-const STORAGE_KEY = "recipe-ratio-tool-v3";
+const STORAGE_KEY = "recipe-ratio-tool-v4";
+const COST_STORAGE_KEY = "recipe-ratio-costs-v1";
 
 const defaultRecipes = [
   {
@@ -75,8 +76,10 @@ const defaultRecipes = [
 ];
 
 let recipes = loadRecipes();
+let costData = loadCostData();
 let selectedIndex = 0;
 let mode = "single";
+let scaleMode = "single";
 let editingIndex = null;
 
 const recipeList = document.querySelector("#recipeList");
@@ -91,6 +94,9 @@ const pantrySummary = document.querySelector("#pantrySummary");
 const pantryInputs = document.querySelector("#pantryInputs");
 const singleMode = document.querySelector("#singleMode");
 const pantryMode = document.querySelector("#pantryMode");
+const costMode = document.querySelector("#costMode");
+const costInputs = document.querySelector("#costInputs");
+const costSummary = document.querySelector("#costSummary");
 const extraHeader = document.querySelector("#extraHeader");
 const recipeDialog = document.querySelector("#recipeDialog");
 const dialogTitle = document.querySelector("#dialogTitle");
@@ -107,11 +113,7 @@ recipeDialog.addEventListener("close", () => document.body.classList.remove("dia
 recipeDialog.querySelectorAll(".dialog-close").forEach((button) => {
   button.addEventListener("click", (event) => {
     event.preventDefault();
-    if (typeof recipeDialog.close !== "function") {
-      closeDialog(recipeDialog);
-    } else {
-      recipeDialog.close();
-    }
+    closeDialog(recipeDialog);
   });
 });
 ingredientSelect.addEventListener("change", renderResults);
@@ -124,10 +126,13 @@ recipePicker.addEventListener("change", () => {
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
-    mode = tab.dataset.mode;
+    const nextMode = tab.dataset.mode;
+    if (nextMode !== "cost") scaleMode = nextMode;
+    mode = nextMode;
     document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
     singleMode.classList.toggle("hidden", mode !== "single");
     pantryMode.classList.toggle("hidden", mode !== "pantry");
+    costMode.classList.toggle("hidden", mode !== "cost");
     renderResults();
   });
 });
@@ -152,6 +157,22 @@ function saveRecipes() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
 }
 
+function loadCostData() {
+  const saved = localStorage.getItem(COST_STORAGE_KEY);
+  if (!saved) return {};
+
+  try {
+    const parsed = JSON.parse(saved);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCostData() {
+  localStorage.setItem(COST_STORAGE_KEY, JSON.stringify(costData));
+}
+
 function currentRecipe() {
   return recipes[selectedIndex] ?? recipes[0];
 }
@@ -161,6 +182,14 @@ function formatNumber(value) {
   if (!Number.isFinite(value)) return "";
   return Number(value.toFixed(precision)).toLocaleString("zh-Hant", {
     maximumFractionDigits: precision,
+  });
+}
+
+function formatMoney(value) {
+  if (!Number.isFinite(value)) return "";
+  return Number(value.toFixed(2)).toLocaleString("zh-Hant", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   });
 }
 
@@ -190,29 +219,55 @@ function renderIngredientControls() {
   const recipe = currentRecipe();
   recipeTitle.textContent = recipe.name;
   ingredientSelect.innerHTML = "";
+  pantryInputs.innerHTML = "";
+  costInputs.innerHTML = "";
+
   recipe.ingredients.forEach((ingredient) => {
     const option = document.createElement("option");
     option.value = ingredient.name;
     option.textContent = ingredient.name;
     ingredientSelect.append(option);
+
+    const pantryLabel = document.createElement("label");
+    pantryLabel.innerHTML = `<span>${ingredient.name}</span>`;
+    const pantryInput = document.createElement("input");
+    pantryInput.type = "number";
+    pantryInput.min = "0";
+    pantryInput.step = "0.01";
+    pantryInput.inputMode = "decimal";
+    pantryInput.dataset.ingredient = ingredient.name;
+    pantryInput.placeholder = String(ingredient.amount);
+    pantryInput.addEventListener("input", renderResults);
+    pantryLabel.append(pantryInput);
+    pantryInputs.append(pantryLabel);
+
+    const savedCost = costData[ingredient.name] ?? {};
+    const costCard = document.createElement("div");
+    costCard.className = "cost-card";
+    costCard.innerHTML = `
+      <strong>${ingredient.name}</strong>
+      <label>
+        <span>買進總價</span>
+        <input type="number" min="0" step="0.01" inputmode="decimal" data-cost-field="price" data-ingredient="${ingredient.name}" value="${savedCost.price ?? ""}">
+      </label>
+      <label>
+        <span>買進總重量</span>
+        <input type="number" min="0" step="0.01" inputmode="decimal" data-cost-field="weight" data-ingredient="${ingredient.name}" value="${savedCost.weight ?? ""}">
+      </label>
+    `;
+    costCard.querySelectorAll("input").forEach((costInput) => {
+      costInput.addEventListener("input", () => {
+        const ingredientName = costInput.dataset.ingredient;
+        costData[ingredientName] = costData[ingredientName] ?? {};
+        costData[ingredientName][costInput.dataset.costField] = costInput.value;
+        saveCostData();
+        renderResults();
+      });
+    });
+    costInputs.append(costCard);
   });
 
   targetAmount.value = recipe.ingredients[0]?.amount ?? 0;
-  pantryInputs.innerHTML = "";
-  recipe.ingredients.forEach((ingredient) => {
-    const label = document.createElement("label");
-    label.innerHTML = `<span>${ingredient.name}</span>`;
-    const input = document.createElement("input");
-    input.type = "number";
-    input.min = "0";
-    input.step = "0.01";
-    input.inputMode = "decimal";
-    input.dataset.ingredient = ingredient.name;
-    input.placeholder = String(ingredient.amount);
-    input.addEventListener("input", renderResults);
-    label.append(input);
-    pantryInputs.append(label);
-  });
 }
 
 function getSingleRatio() {
@@ -253,14 +308,27 @@ function findPantryInput(ingredientName) {
   );
 }
 
+function getIngredientCost(ingredientName, need) {
+  const source = costData[ingredientName];
+  if (!source) return null;
+
+  const price = Number(source.price);
+  const weight = Number(source.weight);
+  if (!Number.isFinite(price) || !Number.isFinite(weight) || price <= 0 || weight <= 0) return null;
+
+  return need * (price / weight);
+}
+
 function renderResults() {
   const recipe = currentRecipe();
   const singleRatio = getSingleRatio();
   const pantryResult = getPantryRatio();
-  const ratio = mode === "single" ? singleRatio : pantryResult.ratio;
+  const ratio = scaleMode === "pantry" ? pantryResult.ratio : singleRatio;
+  let totalCost = 0;
+  let hasAnyCost = false;
 
   document.body.dataset.mode = mode;
-  extraHeader.textContent = mode === "single" ? "調整" : "剩餘";
+  extraHeader.textContent = mode === "cost" ? "成本" : mode === "single" ? "調整" : "剩餘";
   resultBody.innerHTML = "";
 
   recipe.ingredients.forEach((ingredient) => {
@@ -282,6 +350,18 @@ function renderResults() {
       }
     }
 
+    if (mode === "cost") {
+      const cost = getIngredientCost(ingredient.name, need);
+      if (cost === null) {
+        extraText = "";
+      } else {
+        totalCost += cost;
+        hasAnyCost = true;
+        extraText = `$${formatMoney(cost)}`;
+        statusClass = "status-ok";
+      }
+    }
+
     row.innerHTML = `
       <td>${ingredient.name}</td>
       <td>${formatNumber(need)}</td>
@@ -291,6 +371,7 @@ function renderResults() {
   });
 
   renderSummary(ratio, pantryResult);
+  renderCostSummary(totalCost, hasAnyCost);
 }
 
 function renderSummary(ratio, pantryResult) {
@@ -300,12 +381,25 @@ function renderSummary(ratio, pantryResult) {
     return;
   }
 
+  if (mode !== "pantry") return;
+
   if (!pantryResult.limiter) {
     pantrySummary.textContent = "填入手邊食材後自動計算。";
     return;
   }
 
   pantrySummary.textContent = `可做 ${formatNumber(pantryResult.ratio)} 倍，限制：${pantryResult.limiter}`;
+}
+
+function renderCostSummary(totalCost, hasAnyCost) {
+  if (mode !== "cost") return;
+
+  if (!hasAnyCost) {
+    costSummary.textContent = "填入買進總價與總重量後自動計算成本。";
+    return;
+  }
+
+  costSummary.textContent = `本次成品成本：$${formatMoney(totalCost)}`;
 }
 
 function openRecipeDialog(index = null) {

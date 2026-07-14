@@ -147,7 +147,7 @@ h2 {
 
 .mode-tabs {
   display: inline-grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 4px;
   margin: 20px 0 16px;
   padding: 4px;
@@ -220,6 +220,27 @@ textarea {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px;
+}
+
+.cost-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.cost-card {
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr);
+  gap: 12px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.cost-card strong {
+  color: var(--accent-dark);
+  font-size: 1rem;
 }
 
 .table-wrap {
@@ -453,6 +474,10 @@ dialog::backdrop {
   }
 
   .pantry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cost-card {
     grid-template-columns: 1fr;
   }
 
